@@ -17,7 +17,7 @@ else {
        	// echo "Connessione avvenuta con successo";
 }
 
-//ini_set("display_errors", 1);
+ini_set("display_errors", 1);
 /*************************************** FUNZIONI **************************************/
 
 function show_days (&$mysqli, $days) {
@@ -25,11 +25,11 @@ function show_days (&$mysqli, $days) {
 	echo "<table width='100%'><tr ><td><a href='#' class='ui-btn ui-icon-grid ui-btn-icon-left' onClick='window.location=\"/disp?home=1\"'>Elenco</a></td><td><a href=\"#\" class=\"ui-btn ui-icon-search ui-btn-icon-left\" onClick='window.location=\"/disp\"'>Modifica</a></td></tr></table>";
 	$gg = array("X", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom");
 	$options = best_options($days);
-    echo "<table width='100%' style='text-align: center;'><tr ><th colspan='4'>Date Suggerite<br>&nbsp;</th></tr><tr><th></th><th>Data</th><th>Si</th><th>(R)</th></tr>";
+    echo "<table width='100%' style='text-align: center;'><tr ><th colspan='4'>Date Suggerite<br>&nbsp;</th></tr><tr><th></th><th>Data</th><th>Si</th><th>(R)</th><th></th></tr>";
     $c = 0;
      foreach ($options as $da=> $op) {		
     	$c++;
-        echo "<tr><td style='background-color: ".$op['colour'].";'>$c.</td><td style='background-color: ".$op['colour'].";'>".$gg[date("N", strtotime($da))]." " . date("d/m", strtotime($da)). "</td><td style='background-color: ".$op['colour'].";'>". $op['y'] . "</td><td style='background-color: ".$op['colour'].";'>".  $op['r']. "</td></tr>";
+        echo "<tr><td style='background-color: ".$op['colour'].";'>$c.</td><td style='background-color: ".$op['colour'].";'>".$gg[date("N", strtotime($da))]." " . date("d/m", strtotime($da)). "</td><td style='background-color: ".$op['colour'].";'>". $op['y'] . "</td><td style='background-color: ".$op['colour'].";'>".  $op['r']. "</td><td><form method='post' action='?list=1' id='".$da."_e'><input type='hidden' name='datacommit' value='$da'>"; if ($_SESSION['player']=="Davide") echo "<input type='submit' value='OK' ></form>"; echo "</td></tr>";
     }
     echo "</table>";
     log_entry($mysqli, $_SESSION['player'], 3);
@@ -98,31 +98,73 @@ function resultToArray($result) {
     return $rows;
 } 
  
+function get_stats($logs, $players) {
+
+	foreach ($logs as $l) {
+		
+		$output[$l['Nome']] += 1;		
+	
+	}
+
+	$total = count($logs);
+
+	foreach ($output as $n => $v) {
+		$new_output[$n]['attivita'] = round($v/$total ,2); 
+	
+	}
+
+	foreach ($players as $k) {
+	
+		if (!isset($new_output[$k['Nome']])) $new_output[$k['Nome']]=0;
+	
+	}
+	
+	return $new_output;
+}
  
 function generate_days(&$mysqli, $days) {
 	//mostra la pagina "Elenco"
 	$output = best_options($days);
 	$gg = array("X", "L", "M", "M", "G", "V", "S", "D");
 	$im = array(0 => "images/red.png", 1 => "images/green.png", 2 => "images/yellow.png");
+	
+	if ($result = $mysqli->query("SELECT * FROM Date ORDER BY Data DESC LIMIT 1")) {
+		$dates = resultToArray($result);
+    	$result->close();
+    }
+
+	
 
 	echo "<table width='100%'><tr><td><a href=\"/disp/?list=1\" class=\"ui-btn ui-icon-info ui-btn-icon-left\">Date</a></td><td><a href=\"#\" class=\"ui-btn ui-icon-search ui-btn-icon-left\" onClick='window.location=\"/disp\"'>Modifica</a></td></tr></table>";
 	echo "<style>td, th {padding: 0px !important; spacing: 0px; text-align: center !important;}</style>";
   	echo "<table  width='100%'><thead><tr><th colspan='10'>Elenco Disponibilita<br>&nbsp;</th></tr><tr>";
 
+	
+	$cl = array ("#FF0000;", "#00FF00;", "#FFFF00;");
+   			
+   		
+   		
+   		
+	
 	foreach($days[0] as $n => $v) {
+	
+		
+	
 	
     	switch ($n) {
     		case "Data": echo "<th></th>"; break;
-    		case "Davide": echo "<th >D</th>"; break;
-    		case "Andrea": echo "<th>A</th>"; break;
-    		case "Marco": echo "<th>B</th>"; break;
-    		case "Beatrice": echo "<th>T</th>"; break;
-    		case "Antonello": echo "<th>N</th>"; break;
-    		case "Alessandro": echo "<th>P</th>"; break;
-    		case "Leonardo": echo "<th>L</th>"; break;
-    		case "Morris": echo "<th>M</th>"; break;
-    		case "Matteo": echo "<th>F</th>"; break;
+    		case "Davide": echo "<th style='background-color: ".$cl[$dates[0][$n]]."'>D</th>"; break;
+    		case "Andrea": echo "<th style='background-color: ".$cl[$dates[0][$n]]."'>A</th>"; break;
+    		case "Marco": echo "<th style='background-color: ".$cl[$dates[0][$n]]."'>B</th>"; break;
+    		case "Beatrice": echo "<th style='background-color: ".$cl[$dates[0][$n]]."'>T</th>"; break;
+    		case "Antonello": echo "<th style='background-color: ".$cl[$dates[0][$n]]."'>N</th>"; break;
+    		case "Alessandro": echo "<th style='background-color: ".$cl[$dates[0][$n]]."'>P</th>"; break;
+    		case "Leonardo": echo "<th style='background-color: ".$cl[$dates[0][$n]]."'>L</th>"; break;
+    		case "Morris": echo "<th style='background-color: ".$cl[$dates[0][$n]]."'>M</th>"; break;
+    		case "Matteo": echo "<th style='background-color: ".$cl[$dates[0][$n]]."'>F</th>"; break;
    		}
+   		
+   		
 	}
 	echo "</tr></thead><tbody>";
 	foreach ($days as $day) {
@@ -260,6 +302,8 @@ if ($result = $mysqli->query("SELECT * FROM Giocatori ORDER BY Nome ASC")) {
     
 }
 
+
+
 // in caso di login
 if ($_POST['form_type'] == 'login') {
  
@@ -272,6 +316,16 @@ if ($_POST['form_type'] == 'login') {
 }
 
 
+// genero array $logs contenente tutti i log
+if ($result = $mysqli->query("SELECT * FROM Log")) {
+
+	$logs = resultToArray($result);
+	
+    /* free result set */
+    $result->close();
+}
+
+
 // genero array $days contenente tutte le disponibilita
 if ($result = $mysqli->query("SELECT * FROM Giorni WHERE 1 ORDER BY Data ASC")) {
 
@@ -281,6 +335,24 @@ if ($result = $mysqli->query("SELECT * FROM Giorni WHERE 1 ORDER BY Data ASC")) 
     $result->close();
 }
 
+// in caso di accettazione data
+if ($_POST['datacommit'] != "") {
+
+	foreach ($days as $d_e)
+		if ($d_e['Data'] == $_POST['datacommit']) 
+			foreach ($d_e as $field_e => $value_e) {
+				
+				$fields_e[]= $field_e;
+				$values_e[]= $value_e;
+			
+			}
+			$val_e = implode("', '", $values_e);
+			$fie_e = implode(", ", $fields_e);
+			
+	$mysqli -> query("INSERT INTO Date (".$fie_e.") VALUES ('".$val_e."')");
+mail ("dav.lucarelli@gmail.com", "asd", "INSERT INTO Date (".$fie_e.") VALUES ('".$val_e."')");
+
+}
 
 /************************************ HTML *********************************************/
 
