@@ -1,9 +1,9 @@
 <?php
 //Parametri Database
-define("HOSTNAME", "localhost");
-define("USERNAME", "dungeon");
+define("HOSTNAME", "");
+define("USERNAME", "");
 define("PASSWORD", "");
-define("DATABASE", "my_dungeon");
+define("DATABASE", "");
 
 //Soglia per accettazione giocata
 define("THRESHOLD", "6");
