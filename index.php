@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once("config.php");
 //ini_set("display_errors", 1);
 /*************************************** FUNZIONI **************************************/
 
@@ -63,7 +64,7 @@ function best_options ($days) {
             }
        }
        //il numero complessivo di disponibilità (tra effettive e con riserva) deve essere almeno di 6
-       if (($y+$r)>=6) {
+       if (($y+$r)>= THRESHOLD) {
        		$stage2[$s["Data"]]["y"]=$y;
         	$stage2[$s["Data"]]["r"]=$r;
         	$stage2[$s["Data"]]["t"]=$r+$y;       
@@ -220,7 +221,7 @@ function logout(&$mysqli) {
 /******************* CONTROLLI, INIZIALIZZAZIONE DB E PARAMETRI  ************************/ 
 
 //connessione a MySQL con l'estensione MySQLi
-$mysqli = new mysqli("localhost", "dungeon", "", "my_dungeon");
+$mysqli = new mysqli(HOSTNAME, USERNAME, PASSWORD, DATABASE);
 
 // verifica dell'avvenuta connessione
 if (mysqli_connect_errno()) {
