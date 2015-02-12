@@ -118,7 +118,7 @@ function generate_days(&$mysqli, $days, $players) {
 	$output = best_options($days);
 	$gg = array("X", "L", "M", "M", "G", "V", "S", "D");
 	$im = array(0 => "images/red.png", 1 => "images/green.png", 2 => "images/yellow.png");
-	if ($result = $mysqli->query("SELECT * FROM Date ORDER BY Data DESC LIMIT 1")) {
+	if ($result = $mysqli->query("SELECT * FROM Date ORDER BY Data DESC LIMIT 2")) {
 		$dates = resultToArray($result);
     	$result->close();
     }
@@ -133,7 +133,7 @@ function generate_days(&$mysqli, $days, $players) {
     	if ($n == "Data")  
     		echo "<th></th>"; 
     	else 
-    		echo "<th style='background-color: ".$cl[$dates[0][$n]]."'>".$giocatori[$n]['Short']."</th>"; 
+    		echo "<th style='background-color: ".$cl[$dates[1][$n]]."'>".$giocatori[$n]['Short']."</th>"; 
 	}
 	echo "</tr></thead><tbody>";
 	foreach ($days as $day) {
@@ -245,7 +245,7 @@ if ($_POST['form_type'] == "update") {
         $mysqli -> query("UPDATE Giorni SET ".$_POST['name']." = '$value' WHERE Data = '$data'");
  	}
  	log_entry($mysqli, $_SESSION['player'], 2);
-	mail ("dav.lucarelli@gmail.com", "Aggiornamento Disponibilita", $_POST['name'] . " ha aggiornato la sua disponibilità.\nhttp://dungeon.altervista.org/disp");
+	mail (DMEMAIL, "Aggiornamento Disponibilita", $_POST['name'] . " ha aggiornato la sua disponibilità.\nhttp://dungeon.altervista.org/disp");
 	
 }
  
